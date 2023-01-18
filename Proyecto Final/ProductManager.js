@@ -34,12 +34,11 @@ export class ProductManager {
 
     getProductById(id)
     {
-        for (const product of this.products) {
-            if (product.id == id)
-            {
-                console.log(product)
-                return
-            }
+        let product = this.products.find((product) => product.id === id)
+        if (product)
+        {
+            console.log(product)
+            return
         }
         console.log("Producto no existente")
     }

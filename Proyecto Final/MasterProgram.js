@@ -9,4 +9,7 @@ productManager.addProduct("Tostitos","Estos son unos tostitos", 325, "Sin imagen
 productManager.getProducts()
 productManager.getProductById(2)
 productManager.getProductById(0)
+productManager.getProductById(1)
 
+
+    
