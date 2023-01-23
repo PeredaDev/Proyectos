@@ -1,18 +1,45 @@
+import { FileManager } from "./FilesManager.js"
+
 export class ProductManager {
     constructor (){
+        this.fileManager = new FileManager("C:\\Proyectos\\Base de Datos Productos")
         this.products = []
-        this.nextId = 0
+        this.initialize()
     }
 
-    addProduct(title, description, price, thumbnail, code, stock){
-        if (title == '' || description == '' || price == '' || thumbnail == ''  || code == '' || stock == '')
-            return
+    static NextId = 0
+
+    initialize(){
+        this.getProducts()
+            .then((data) => this.products = data)
+            .then(() => this.getNextId())
+    }
+
+    getNextId(){
         for (const product of this.products) {
-            if(code==product.code)
-            {
-                console.log("Producucto con codigo duplicado")
-                return
-            }
+            if(product.id > ProductManager.NextId)
+                ProductManager.NextId = product.id
+        }
+        if(this.products.length != 0)
+            ProductManager.NextId++
+        console.log("Se ha inicializado el contructor, el siguiente ID disponible: " + ProductManager.NextId)
+    }
+
+    async getProducts(){
+        let products = await this.fileManager.getProductsFromFile()
+        return products
+    }
+
+    async addProduct(title, description, price, thumbnail, code, stock){
+        if (code === '')
+        {
+            console.log("El campo code no puede estar vacio")
+            return
+        }    
+        if(this.products.find(product => product.code == code))
+        {
+            console.log("Producto con codigo duplicado")
+            return
         }
         let product = {
             title: title,
@@ -21,25 +48,51 @@ export class ProductManager {
             thumbnail: thumbnail,
             code: code,
             stock: stock,
-            id: this.nextId
+            id: ProductManager.NextId
         }
         this.products.push(product)
-        this.nextId++
+        ProductManager.NextId++
+        await this.fileManager.addProductToFile(this.products)
+        .then(() => console.log("Producto agregado"))
     }
-
-    getProducts()
-    {
-        console.log(this.products)
-    }
-
-    getProductById(id)
-    {
-        let product = this.products.find((product) => product.id === id)
+    
+    async getProductById(id){
+        let products = await this.fileManager.getProductsFromFile()
+        let product = products.find((product) => product.id === id)
         if (product)
         {
-            console.log(product)
+            console.log("Producto[" + id + "]: " + JSON.stringify(product))
             return
         }
         console.log("Producto no existente")
+    }
+
+    async modifyProducts(id, modifiedProduct){ 
+        let objIndex = await this.products.findIndex((obj => obj.id == id));
+        if (objIndex==-1)
+            console.log("Producto no existente")    
+        else
+        {
+            this.products[objIndex].title = modifiedProduct.title
+            this.products[objIndex].description = modifiedProduct.description
+            this.products[objIndex].price = modifiedProduct.price
+            this.products[objIndex].thumbnail = modifiedProduct.thumbnail
+            this.products[objIndex].code = modifiedProduct.code
+            this.products[objIndex].stock = modifiedProduct.stock
+            await this.fileManager.addProductToFile(this.products)
+            .then( () => console.log("Producto modificado"))
+        }
+    }
+
+    async deleteProduct(id){
+        let objIndex = this.products.findIndex((obj => obj.id == id));
+        if (objIndex==-1)
+            console.log("Producto no existente")    
+        else
+        {
+            this.products.splice(objIndex,1)
+            await this.fileManager.addProductToFile(this.products)
+            .then( () => console.log("Producto eliminado"))
+        }
     }
 }

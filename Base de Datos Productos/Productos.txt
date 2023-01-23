@@ -1,0 +1,1 @@
+[{"title":"Tostitos","description":"Fritura de tortilla en salsa verde","price":15,"thumbnail":"Sin imagen","code":"001","stock":25,"id":0},{"title":"Doritos","description":"Fritura de maiz con polvo de sabor a queso","price":20,"thumbnail":"Sin imagen","code":"002","stock":25,"id":1}]
