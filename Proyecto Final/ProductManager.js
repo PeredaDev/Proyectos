@@ -2,7 +2,7 @@ import { FileManager } from "./FilesManager.js"
 
 export class ProductManager {
     constructor (){
-        this.fileManager = new FileManager("C:\\Proyectos\\Base de Datos Productos")
+        this.fileManager = new FileManager("../Base de Datos Productos")
         this.products = []
         this.initialize()
     }
@@ -25,9 +25,14 @@ export class ProductManager {
         console.log("Se ha inicializado el contructor, el siguiente ID disponible: " + ProductManager.NextId)
     }
 
-    async getProducts(){
+    async getProducts(limit=0){
         let products = await this.fileManager.getProductsFromFile()
-        return products
+        if (limit === 0)
+            return products
+        else
+        {
+            return products.slice(0 - limit)
+        }
     }
 
     async addProduct(title, description, price, thumbnail, code, stock){
@@ -62,7 +67,7 @@ export class ProductManager {
         if (product)
         {
             console.log("Producto[" + id + "]: " + JSON.stringify(product))
-            return
+            return JSON.stringify(product)
         }
         console.log("Producto no existente")
     }
