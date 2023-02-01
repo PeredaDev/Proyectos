@@ -2,27 +2,32 @@ import { FileManager } from "./FilesManager.js"
 
 export class ProductManager {
     constructor (){
-        this.fileManager = new FileManager("../Base de Datos Productos")
+        this.fileManager = new FileManager("..\\Proyecto Final\\src\\models")
         this.products = []
         this.initialize()
     }
 
     static NextId = 0
 
-    initialize(){
-        this.getProducts()
-            .then((data) => this.products = data)
-            .then(() => this.getNextId())
+    async initialize(){
+        this.products = await this.getProducts()
+        this.getNextId()
+        console.log("Se ha inicializado el contructor, el siguiente ID disponible: " + ProductManager.NextId)
     }
 
     getNextId(){
-        for (const product of this.products) {
-            if(product.id > ProductManager.NextId)
-                ProductManager.NextId = product.id
+        const sortedArray = this.products
+            .slice()
+            .sort(function (a, b) {return a.id - b.id});
+        let previousId = 0;
+        for (let element of sortedArray) {
+            if (element.id != (previousId)) {
+                ProductManager.NextId = previousId
+                return
+            }
+            previousId++;
         }
-        if(this.products.length != 0)
-            ProductManager.NextId++
-        console.log("Se ha inicializado el contructor, el siguiente ID disponible: " + ProductManager.NextId)
+        ProductManager.NextId = previousId
     }
 
     async getProducts(limit=0){
@@ -38,13 +43,13 @@ export class ProductManager {
     async addProduct(title, description, price, thumbnail, code, stock){
         if (code === '')
         {
-            console.log("El campo code no puede estar vacio")
-            return
+            console.log("Error agregando producto, el campo code no puede estar vacio")
+            return false
         }    
         if(this.products.find(product => product.code == code))
         {
-            console.log("Producto con codigo duplicado")
-            return
+            console.log("Error agregando producto, producto con codigo duplicado")
+            return false
         }
         let product = {
             title: title,
@@ -56,9 +61,10 @@ export class ProductManager {
             id: ProductManager.NextId
         }
         this.products.push(product)
-        ProductManager.NextId++
         await this.fileManager.addProductToFile(this.products)
-        .then(() => console.log("Producto agregado"))
+        this.getNextId()
+        console.log("Producto exitosamente agregado")
+        return true
     }
     
     async getProductById(id){
@@ -70,12 +76,16 @@ export class ProductManager {
             return JSON.stringify(product)
         }
         console.log("Producto no existente")
+        return false
     }
 
     async modifyProducts(id, modifiedProduct){ 
-        let objIndex = await this.products.findIndex((obj => obj.id == id));
+        let objIndex = this.products.findIndex((obj => obj.id == id));
         if (objIndex==-1)
-            console.log("Producto no existente")    
+        {
+            console.log("Falla al modificar, producto no existente")
+            return false
+        }
         else
         {
             this.products[objIndex].title = modifiedProduct.title
@@ -85,19 +95,24 @@ export class ProductManager {
             this.products[objIndex].code = modifiedProduct.code
             this.products[objIndex].stock = modifiedProduct.stock
             await this.fileManager.addProductToFile(this.products)
-            .then( () => console.log("Producto modificado"))
+            console.log("Producto modificado exitosamente")
+            return true
         }
     }
 
     async deleteProduct(id){
         let objIndex = this.products.findIndex((obj => obj.id == id));
         if (objIndex==-1)
-            console.log("Producto no existente")    
+        {
+            console.log("Producto no existente")  
+            return false  
+        }
         else
         {
             this.products.splice(objIndex,1)
             await this.fileManager.addProductToFile(this.products)
-            .then( () => console.log("Producto eliminado"))
+            console.log("Producto eliminado")
+            return true
         }
     }
 }

@@ -1,31 +1,14 @@
-import express, { response } from 'express'
-import { ProductManager } from "../ProductManager.js"
+import express from 'express'
+import productRouter from './routes/product.js'
 
 const app = express()
-const PORT = 4000
-let productManager = new ProductManager()
+const PORT = 8080
 
-app.use(express.urlencoded({extended: true})) //Permite busquedas de url complejas
+app.use(express.json()) 
+app.use(express.urlencoded({extended: true})) 
+app.use('/products', productRouter)
 
-app.get('/products', (req, res) => {
-    const limit = req.query.limit
-    if (limit > 0)
-        console.log("Limite de productos a mostrar: " + limit)
-    console.log("Obteniendo productos")
-    productManager.getProducts(limit).then((products) => res.send(JSON.stringify(products)))    
-    .then(console.log("Productos mostrados en la web"))
-})
-
-app.get('/products/:id', async (req, res) => {
-    const id = parseInt(req.params.id)
-    console.log("Obteniendo producto por ID")
-    productManager.getProductById(id).then((product) => res.send("Hola, este el producto: " + product))
-})
-
-app.get('/', (req, res) => {
-    res.send("Hola, esta es la pagina de inicio")
-})
-
+//Start listening server
 app.listen(PORT, () => {
     console.log(`Server on port ${PORT}`)    
 })
