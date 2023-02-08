@@ -11,12 +11,12 @@ export class FileManager{
         console.log(FileManager.Path)
     }
 
-    async getProductsFromFile(){
-        let products = await fs.readFile(FileManager.Path + '\\Productos.txt', 'utf-8')
-        return  JSON.parse(products)
+    async getElementsFromFile(){
+        let elements = await fs.readFile(FileManager.Path, 'utf-8')
+        return JSON.parse(elements)
     }
 
-    async addProductToFile(products){
-        await fs.writeFile(FileManager.Path + '\\Productos.txt', JSON.stringify(products))
+    async writeElementsToFile(elements){
+        await fs.writeFile(FileManager.Path, JSON.stringify(elements))
     }
 }

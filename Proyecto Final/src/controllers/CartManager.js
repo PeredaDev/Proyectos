@@ -1,11 +1,11 @@
 import { FileManager } from "./FilesManager.js"
 
-export class ProductManager {
+export class CartManager {
     constructor (){
-        this.path = "..\\Proyecto Final\\src\\models\\Productos.txt"
+        this.path = "..\\Proyecto Final\\src\\models\\Carrito.txt"
         this.fileManager = new FileManager(this.path)
-        this.products = []
         this.initialize()
+        this.carts = []
     }
 
     static NextId = 0
@@ -13,7 +13,7 @@ export class ProductManager {
     async initialize(){
         this.products = await this.getProducts()
         this.getNextId()
-        console.log("Se ha inicializado el contructor ProductManager, el siguiente ID disponible: " + ProductManager.NextId)
+        console.log("Se ha inicializado el contructor CartManager, el siguiente ID disponible: " + CartManager.NextId)
         console.log("Con la ruta: " + this.path)
     }
 
@@ -29,45 +29,30 @@ export class ProductManager {
             }
             previousId++;
         }
-        ProductManager.NextId = previousId
+        CartManager.NextId = previousId
     }
 
     async getProducts(limit=0){
-        let products = await this.fileManager.getElementsFromFile()
+        let carts = await this.fileManager.getElementsFromFile()
         if (limit === 0)
-            return products
+            return carts
         else
-            return products.slice(0 - limit)
+            return carts.slice(0 - limit)
     }
 
-    async addProduct(title, description, price, thumbnail, code, stock){
-        if (code === '')
-        {
-            console.log("Error agregando producto, el campo code no puede estar vacio")
-            return false
-        }    
-        if(this.products.find(product => product.code == code))
-        {
-            console.log("Error agregando producto, producto con codigo duplicado")
-            return false
+    async createCart(cart){
+        const mewCart = {
+            id: CartManager.NextId,
+            products: cart.products
         }
-        let product = {
-            title: title,
-            description: description,
-            price: price,  
-            thumbnail: thumbnail,
-            code: code,
-            stock: stock,
-            id: ProductManager.NextId
-        }
-        this.products.push(product)
-        await this.fileManager.writeElementsToFile(this.products)
+        this.carts.push(cart)
+        await this.fileManager.writeElementsToFile(this.carts)
         this.getNextId()
-        console.log("Producto exitosamente agregado a la base de datos")
+        console.log("Producto exitosamente agregado al carrito")
         return true
     }
     
-    async getProductById(id){
+    async getCartById(id){
         let products = await this.fileManager.getElementsFromFile()
         let product = products.find((product) => product.id === id)
         if (product)
@@ -75,7 +60,7 @@ export class ProductManager {
             console.log("Producto[" + id + "]: " + JSON.stringify(product))
             return JSON.stringify(product)
         }
-        console.log("Producto no existente en la base de datos")
+        console.log("Producto no existente en el carrito")
         return false
     }
 
@@ -83,7 +68,7 @@ export class ProductManager {
         let objIndex = this.products.findIndex((obj => obj.id == id));
         if (objIndex==-1)
         {
-            console.log("Falla al modificar, producto no existente")
+            console.log("Falla al modificar, producto no existente en el carrito")
             return false
         }
         else
@@ -95,7 +80,7 @@ export class ProductManager {
             this.products[objIndex].code = modifiedProduct.code
             this.products[objIndex].stock = modifiedProduct.stock
             await this.fileManager.writeElementsToFile(this.products)
-            console.log("Producto modificado exitosamente")
+            console.log("Producto modificado exitosamente dentro del carrito")
             return true
         }
     }
@@ -104,14 +89,14 @@ export class ProductManager {
         let objIndex = this.products.findIndex((obj => obj.id == id));
         if (objIndex==-1)
         {
-            console.log("Producto no existente en la base de datos")  
+            console.log("Producto no existente en el carrito")  
             return false  
         }
         else
         {
             this.products.splice(objIndex,1)
             await this.fileManager.writeElementsToFile(this.products)
-            console.log("Producto eliminado de la base de datos")
+            console.log("Producto eliminado del carrito")
             return true
         }
     }

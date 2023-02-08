@@ -1,0 +1,8 @@
+{
+    "title": "Cheetos",
+    "description": "Arroz inflado sabor queso",
+    "price": 10,
+    "thumbnail": "no image",
+    "code": "003",
+    "stock": 100
+}

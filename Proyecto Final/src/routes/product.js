@@ -6,7 +6,7 @@ const productManager = new ProductManager()
 const productRouter = Router()
 
 productRouter.get('/', async (req, res) => {
-    const limit = req.query.limit
+    const limit = req.query.limit == undefined? 0 : req.query.limit
     console.log("Limite de productos a mostrar: " + limit)
     let products = await productManager.getProducts(limit)
     res.send(JSON.stringify(products))
@@ -18,18 +18,18 @@ productRouter.get('/:id', async (req, res) => {
     console.log("Obteniendo producto por ID")
     let product = await productManager.getProductById(id)
     if (product)
-        res.send("Hola, este el producto: " + product)
+        res.send("Hola, este el producto: " + product + "\n")
     else
-        res.send("Falla al obtener el producto")
+        res.send("Falla al obtener el producto \n")
 })
 
 productRouter.post('/', async (req, res) => {
     const product = req.body
     let result = await productManager.addProduct(product.title, product.description, product.price, product.thumbnail, product.code, product.stock)
     if (result)
-        res.send("Producto agregado")
+        res.send("Producto agregado\n")
     else
-        res.send("Falla al agregar el producto")
+        res.send("Falla al agregar el producto\n")
 })
 
 productRouter.put('/:id', async (req,res) => {
