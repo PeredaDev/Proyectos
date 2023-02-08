@@ -1,21 +1,17 @@
 import {Router} from 'express'
 import {ProductManager} from "../controllers/ProductManager.js"
 
-
 const productManager = new ProductManager()
 const productRouter = Router()
 
 productRouter.get('/', async (req, res) => {
-    const limit = req.query.limit == undefined? 0 : req.query.limit
-    console.log("Limite de productos a mostrar: " + limit)
+    const limit = req.query.limit
     let products = await productManager.getProducts(limit)
     res.send(JSON.stringify(products))
-    console.log("Productos mostrados en la web \n")
 })
 
 productRouter.get('/:id', async (req, res) => {
     const id = parseInt(req.params.id)
-    console.log("Obteniendo producto por ID")
     let product = await productManager.getProductById(id)
     if (product)
         res.send("Hola, este el producto: " + product + "\n")

@@ -14,7 +14,7 @@ export class ProductManager {
         this.products = await this.getProducts()
         this.getNextId()
         console.log("Se ha inicializado el contructor ProductManager, el siguiente ID disponible: " + ProductManager.NextId)
-        console.log("Con la ruta: " + this.path)
+        console.log("Con la ruta: " + this.path + "\n")
     }
 
     getNextId(){
@@ -32,9 +32,9 @@ export class ProductManager {
         ProductManager.NextId = previousId
     }
 
-    async getProducts(limit=0){
+    async getProducts(limit){
         let products = await this.fileManager.getElementsFromFile()
-        if (limit === 0)
+        if (limit == undefined)
             return products
         else
             return products.slice(0 - limit)
@@ -43,12 +43,12 @@ export class ProductManager {
     async addProduct(title, description, price, thumbnail, code, stock){
         if (code === '')
         {
-            console.log("Error agregando producto, el campo code no puede estar vacio")
+            console.log("Error agregando producto, el campo code no puede estar vacio \n")
             return false
         }    
         if(this.products.find(product => product.code == code))
         {
-            console.log("Error agregando producto, producto con codigo duplicado")
+            console.log("Error agregando producto, producto con codigo duplicado \n")
             return false
         }
         let product = {
@@ -63,19 +63,20 @@ export class ProductManager {
         this.products.push(product)
         await this.fileManager.writeElementsToFile(this.products)
         this.getNextId()
-        console.log("Producto exitosamente agregado a la base de datos")
+        console.log("Producto exitosamente agregado a la base de datos \n")
         return true
     }
     
     async getProductById(id){
+        console.log("Obteniendo producto por ID")
         let products = await this.fileManager.getElementsFromFile()
         let product = products.find((product) => product.id === id)
         if (product)
         {
-            console.log("Producto[" + id + "]: " + JSON.stringify(product))
+            console.log("Producto[" + id + "]: " + JSON.stringify(product) + "\n")
             return JSON.stringify(product)
         }
-        console.log("Producto no existente en la base de datos")
+        console.log("Producto no existente en la base de datos \n")
         return false
     }
 
@@ -104,14 +105,14 @@ export class ProductManager {
         let objIndex = this.products.findIndex((obj => obj.id == id));
         if (objIndex==-1)
         {
-            console.log("Producto no existente en la base de datos")  
+            console.log("Producto no existente en la base de datos \n")  
             return false  
         }
         else
         {
             this.products.splice(objIndex,1)
             await this.fileManager.writeElementsToFile(this.products)
-            console.log("Producto eliminado de la base de datos")
+            console.log("Producto eliminado de la base de datos \n")
             return true
         }
     }

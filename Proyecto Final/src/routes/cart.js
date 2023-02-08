@@ -23,14 +23,16 @@ cartRouter.post('/', async (req, res) => {
         res.send("Falla al crear el carrito")
 })
 
-cartRouter.post('/', async (req, res) => {
-    const cart = req.body
-    let result = await cartManager.addProduct(product.title, product.description, product.price, product.thumbnail, product.code, product.stock)
-    if (result)
-        res.send("Producto agregado")
-    else
-        res.send("Falla al agregar el producto")
-})
 
+cartRouter.post('/:cid/product/:pid', async (req,res) => {
+    const pid = parseInt(req.params.pid)
+    const cid = parseInt(req.params.cid)
+    console.log(pid, cid)
+    let result = await cartManager.addProduct(pid, cid)
+    if (result)
+        res.send("Carrito modificado")
+    else
+        res.send("Falla al modifciar el carrito")
+})
 
 export default cartRouter;

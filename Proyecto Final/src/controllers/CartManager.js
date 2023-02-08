@@ -4,27 +4,27 @@ export class CartManager {
     constructor (){
         this.path = "..\\Proyecto Final\\src\\models\\Carrito.txt"
         this.fileManager = new FileManager(this.path)
-        this.initialize()
         this.carts = []
+        this.initialize()
     }
 
     static NextId = 0
 
     async initialize(){
-        this.products = await this.getProducts()
+        this.carts = await this.getCarts()
         this.getNextId()
         console.log("Se ha inicializado el contructor CartManager, el siguiente ID disponible: " + CartManager.NextId)
-        console.log("Con la ruta: " + this.path)
+        console.log("Con la ruta: " + this.path + "\n")
     }
 
     getNextId(){
-        const sortedArray = this.products
+        const sortedArray = this.carts
             .slice()
             .sort(function (a, b) {return a.id - b.id});
         let previousId = 0;
         for (let element of sortedArray) {
             if (element.id != (previousId)) {
-                ProductManager.NextId = previousId
+                CartManager.NextId = previousId
                 return
             }
             previousId++;
@@ -32,7 +32,7 @@ export class CartManager {
         CartManager.NextId = previousId
     }
 
-    async getProducts(limit=0){
+    async getCarts(limit=0){
         let carts = await this.fileManager.getElementsFromFile()
         if (limit === 0)
             return carts
@@ -41,62 +41,57 @@ export class CartManager {
     }
 
     async createCart(cart){
-        const mewCart = {
+        const newCart = {
             id: CartManager.NextId,
             products: cart.products
         }
-        this.carts.push(cart)
+        this.carts.push(newCart)
         await this.fileManager.writeElementsToFile(this.carts)
         this.getNextId()
-        console.log("Producto exitosamente agregado al carrito")
+        console.log("Carrito creado exitosamente")
         return true
     }
     
     async getCartById(id){
-        let products = await this.fileManager.getElementsFromFile()
-        let product = products.find((product) => product.id === id)
-        if (product)
+        this.carts = await this.fileManager.getElementsFromFile()
+        let cart = this.carts.find((cart) => cart.id === id)
+        if (cart)
         {
-            console.log("Producto[" + id + "]: " + JSON.stringify(product))
-            return JSON.stringify(product)
+            console.log("Carrito[" + id + "]: " + JSON.stringify(cart))
+            return JSON.stringify(cart)
         }
         console.log("Producto no existente en el carrito")
         return false
     }
 
-    async modifyProducts(id, modifiedProduct){ 
-        let objIndex = this.products.findIndex((obj => obj.id == id));
+    async addProduct(pid, cid){ 
+        this.carts = await this.fileManager.getElementsFromFile()
+        console.log(this.carts)
+        let objIndex = this.carts.findIndex((obj => obj.id === cid));
+        console.log("Index carrito: "+ objIndex)
         if (objIndex==-1)
         {
-            console.log("Falla al modificar, producto no existente en el carrito")
+            console.log("Falla al modificar, carrito no existente")
             return false
         }
-        else
+        let productIndex = this.carts[objIndex].products.findIndex((obj => obj.id === pid))
+        console.log("Index objeto " + productIndex)
+        if (productIndex==-1)
         {
-            this.products[objIndex].title = modifiedProduct.title
-            this.products[objIndex].description = modifiedProduct.description
-            this.products[objIndex].price = modifiedProduct.price
-            this.products[objIndex].thumbnail = modifiedProduct.thumbnail
-            this.products[objIndex].code = modifiedProduct.code
-            this.products[objIndex].stock = modifiedProduct.stock
-            await this.fileManager.writeElementsToFile(this.products)
-            console.log("Producto modificado exitosamente dentro del carrito")
+            const productCart = {
+                id: pid, 
+                quantity: 1
+            }
+            this.carts[objIndex].products.push(productCart)
+            await this.fileManager.writeElementsToFile(this.carts)
+            console.log("Producto agregado exitosamente dentro del carrito")
             return true
         }
-    }
-
-    async deleteProduct(id){
-        let objIndex = this.products.findIndex((obj => obj.id == id));
-        if (objIndex==-1)
-        {
-            console.log("Producto no existente en el carrito")  
-            return false  
-        }
         else
         {
-            this.products.splice(objIndex,1)
-            await this.fileManager.writeElementsToFile(this.products)
-            console.log("Producto eliminado del carrito")
+            this.carts[objIndex].products[productIndex].quantity++
+            await this.fileManager.writeElementsToFile(this.carts)
+            console.log("Producto modificado exitosamente dentro del carrito")
             return true
         }
     }
