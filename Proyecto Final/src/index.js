@@ -27,10 +27,8 @@ app.use('/api/cart', cartRouter)
 
 
 //Multer
-app.post('/upload', upload.single('product'), (req,res) => {
+app.post('/upload', upload.single('image'), (req,res) => {
     console.log(req.file)
-    console.log(req.body)
-    //req.body() no tiene la info del archivo
     res.send("Imagen cargada")
   })
 

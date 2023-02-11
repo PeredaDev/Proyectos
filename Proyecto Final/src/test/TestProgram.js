@@ -1,6 +1,8 @@
 import { ProductManager } from "../controllers/ProductManager.js"
+import { CartManager } from "../controllers/CartManager.js"
 
 let productManager = new ProductManager()
+let cartManager = new CartManager()
 
 let newProduct = {
     title: "Sabrtias",
