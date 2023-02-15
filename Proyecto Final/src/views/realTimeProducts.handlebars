@@ -1,0 +1,33 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Titulo</th>
+            <th scope="col">Precio</th>
+            <th scope="col">Codigo</th>
+            <th scope="col">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+            {{#each productos}}
+                <tr>
+                    <th scope="row">{{this.id}}</th>
+                    <td>{{this.title}}</td>
+                    <td>{{this.description}}</td>
+                    <td>{{this.price}}</td>
+                    <td>{{this.code}}</td>                
+                    <td>
+                    <button type="button" class="btn btn-primary"><i class="fa-eye"></i></button>
+                    <button type="button" class="btn btn-success"><i class="fa-edit"></i></button>
+                    <button type="button" class="btn btn-danger"><i class="fa-trash-alt"></i></button>
+                    </td>
+                </tr>
+            {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
