@@ -19,3 +19,7 @@ socket.on('productoEliminado' , correcto => {
 // socket.on('evento-general', datos => {
 //     console.log(datos)
 // })
+
+socket.on('evento-general', datos => {
+    console.log(datos)
+})
