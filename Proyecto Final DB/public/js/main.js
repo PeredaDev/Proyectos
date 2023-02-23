@@ -5,6 +5,7 @@ function deleteProduct(id){
 }
 
 function modifyProduct(id){
+    console.log("pereda")
     let title = document.getElementById("getTitleModify").value;
     let description = document.getElementById("getDescriptionModify").value;
     let price = document.getElementById("getPriceModify").value;
@@ -19,15 +20,15 @@ function modifyProduct(id){
 }
 
 function addProduct(){
-    let title = document.getElementById("getTitle").value;
-    let description = document.getElementById("getDescription").value;
-    let price = document.getElementById("getPrice").value;
-    let code = document.getElementById("getCode").value;
+    let title = document.getElementById("getTitle")
+    let description = document.getElementById("getDescription")
+    let price = document.getElementById("getPrice")
+    let code = document.getElementById("getCode")
     const product = {
-        title: title,
-        description: description,
-        price: price,
-        code: code
+        title: title.value,
+        description: description.value,
+        price: price.value,
+        code: code.value
     }
     socket.emit('addProduct', product)
 }
@@ -59,8 +60,8 @@ socket.on('initialize' , products => {
         rowElementActionDelete.setAttribute('class', 'btn btn-danger m-1')
         rowElementActionEditIcon.setAttribute('class', 'bi-pencil-square')
         rowElementActionDeleteIcon.setAttribute('class', 'bi-trash')
-        rowElementActionEdit.setAttribute('onclick', `modifyProduct(${product.id})`)
-        rowElementActionDelete.setAttribute('onclick', `deleteProduct(${product.id})`)
+        rowElementActionEdit.setAttribute('onclick', `modifyProduct('${product.id}')`)
+        rowElementActionDelete.setAttribute('onclick', `deleteProduct('${product.id}')`)
 
         rowElementId.innerText = product.id
         rowElementName.innerText = product.title

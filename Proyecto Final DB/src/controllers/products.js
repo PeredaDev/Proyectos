@@ -2,95 +2,55 @@ import {mongoose} from 'mongoose'
 
 export class RealTimeManager {
     constructor (){
-        this.products = []
         this.initialize()
     }
 
-    static NextId = 0
-
     async initialize(){
-        const uri = "mongodb://localhost:27017/productDatabase";
-        mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopolo: true})
-        try 
+        try
         {
-            // Connect to the MongoDB cluster
-            await client.connect();
-            // Make the appropriate DB calls
-            await listDatabases(client);
-            console.log("Se ha inicializado la conexion con la base de datos")
+            await mongoose.connect('mongodb://127.0.0.1:27017/productDatabase')
+            this.productSchema = new mongoose.Schema({
+                title: String,
+                description: String,
+                price: String,
+                code: Number
+              })
+            this.product = mongoose.model('Product', this.productSchema)
+            console.log("Base de datos conectada")
         }
-        catch (e) 
+        catch
         {
-            console.error(e);
+            console.log("Error en la conexion con la base datos")
         }
-        finally 
-        {
-           await client.close();
-        }
-
     }
 
-    async listDatabases(client){
-        databasesList = await client.db().admin().listDatabases();
-     
-        console.log("Databases:");
-        databasesList.databases.forEach(db => console.log(` - ${db.name}`));
-    };
-
-    getProducts(){
-        const pereda = [
-            {
-                id: 1,
-                title: "Tostitos",
-                description: "Sabritas enchilosas",
-                price: 15,
-                code: "001" 
-            },
-            {
-                id: 2,
-                title: "Tostitos",
-                description: "Sabritas enchilosas",
-                price: 15,
-                code: "002"
-            },
-            {
-                id: 3,
-                title: "Tostitos",
-                description: "Sabritas enchilosas",
-                price: 15,
-                code: "003"
-            },
-            {
-                id: 4,
-                title: "Tostitos",
-                description: "Sabritas enchilosas",
-                price: 15,
-                code: "004" 
-            },
-            {
-                id: 5,
-                title: "Tostitos",
-                description: "Sabritas enchilosas",
-                price: 15,
-                code: "005"
-            }
-        ]
-        return pereda
+    async getProducts (){
+        let products = await this.product.find()
+        products = products.map(({_id, title, description, price, code})=>{ 
+            const id = _id.toString()
+            return {id, title, description, price, code};
+          });
+        return products
     }
 
     async addProduct(product){
-      console.log(product.title)  
-      console.log(product.description)  
-      console.log(product.price)  
-      console.log(product.code)  
+        const newProduct = new this.product({
+            title: product.title,
+            description: product.description,
+            price: product.price,
+            code: product.code
+        })
+        await newProduct.save()
+        return
     }
 
     async modifyProducts(id, product){ 
-        console.log(id)
-        console.log(product)
+        await this.product.updateOne({ _id: id }, { title: product.title, description: product.description, price: product.price, code: product.code })
+        return
     }
 
     async deleteProduct(id){
-        console.log(id)
+        await this.product.deleteOne({ _id: id })
+        return
     }
 }

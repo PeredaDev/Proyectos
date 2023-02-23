@@ -40,20 +40,26 @@ const realTimeManager = new RealTimeManager()
 const io = new Server(server);
 
 //Web sockets funtionality
-io.on("connection", (socket) => {
-    const products = realTimeManager.getProducts()
+io.on("connection", async(socket) => {
+    const products = await realTimeManager.getProducts()
     socket.emit("initialize", products)
 
-    socket.on("deleteProduct", (id) => {
+    socket.on("deleteProduct", async (id) => {
         realTimeManager.deleteProduct(id)
+        const products = await realTimeManager.getProducts()
+        socket.emit("initialize", products)
     })
     
-    socket.on("addProduct", (product) => {
+    socket.on("addProduct", async (product) => {
         realTimeManager.addProduct(product)
+        const products = await realTimeManager.getProducts()
+        socket.emit("initialize", products)
     })
     
-    socket.on("modifyProduct", (modifiedProduct, id) => {
+    socket.on("modifyProduct", async (modifiedProduct, id) => {
         realTimeManager.modifyProducts(id, modifiedProduct)
+        const products = await realTimeManager.getProducts()
+        socket.emit("initialize", products)
     })
 })
 
