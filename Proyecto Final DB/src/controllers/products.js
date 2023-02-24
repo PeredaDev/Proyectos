@@ -1,4 +1,5 @@
 import { mongoose } from "mongoose";
+import { product } from "../schemas/mongoSchemas.js";
 
 export class RealTimeManager {
   constructor() {
@@ -9,13 +10,7 @@ export class RealTimeManager {
     try {
       mongoose.set("strictQuery", false);
       await mongoose.connect("mongodb://127.0.0.1:27017/productDatabase");
-      this.productSchema = new mongoose.Schema({
-        title: String,
-        description: String,
-        price: String,
-        code: Number,
-      });
-      this.product = mongoose.model("Product", this.productSchema);
+      this.product = mongoose.model("Product", new mongoose.Schema(product));
       console.log(
         'Base de datos conectada en "127.0.0.1:27017/productDatabase"\n'
       );
@@ -80,11 +75,11 @@ export class RealTimeManager {
 
   async deleteProduct(id) {
     try {
-        await this.product.deleteOne({ _id: id });
-        return true;
+      await this.product.deleteOne({ _id: id });
+      return true;
     } catch (error) {
-        console.log("Error elimando producto")
-        return false   
+      console.log("Error elimando producto");
+      return false;
     }
   }
 }
