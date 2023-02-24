@@ -9,17 +9,28 @@ function modifyProduct(id) {
   let description = document.getElementById("getDescriptionModify");
   let price = document.getElementById("getPriceModify");
   let code = document.getElementById("getCodeModify");
-  const product = {
-    title: title.value,
-    description: description.value,
-    price: price.value,
-    code: code.value,
-  };
-  title.value = ''
-  description.value = ''
-  price.value = ''
-  code.value = ''
-  socket.emit("modifyProduct", product, id);
+  if (
+    !(
+      title.value === "" ||
+      description.value === "" ||
+      price.value === "" ||
+      isNaN(code.value)
+    )
+  ) {
+    const product = {
+      title: title.value,
+      description: description.value,
+      price: price.value,
+      code: Number(code.value),
+    };
+    title.value = "";
+    description.value = "";
+    price.value = "";
+    code.value = "";
+    socket.emit("modifyProduct", product, id);
+  } else {
+    window.confirm("Todos los campos se deben llenar correctamente (Codigo es un numero)");
+  }
 }
 
 function addProduct() {
@@ -27,17 +38,28 @@ function addProduct() {
   let description = document.getElementById("getDescription");
   let price = document.getElementById("getPrice");
   let code = document.getElementById("getCode");
-  const product = {
-    title: title.value,
-    description: description.value,
-    price: price.value,
-    code: code.value,
-  };
-  title.value = ''
-  description.value = ''
-  price.value = ''
-  code.value = ''
-  socket.emit("addProduct", product);
+  if (
+    !(
+      title.value === "" ||
+      description.value === "" ||
+      price.value === "" ||
+      isNaN(code.value)
+    )
+  ) {
+    const product = {
+      title: title.value,
+      description: description.value,
+      price: price.value,
+      code: code.value,
+    };
+    title.value = "";
+    description.value = "";
+    price.value = "";
+    code.value = "";
+    socket.emit("addProduct", product);
+  } else {
+    window.confirm("Todos los campos se deben llenar correctamente (Codigo es un numero)");
+  }
 }
 
 socket.on("update", (products) => {
