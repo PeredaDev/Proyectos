@@ -1,7 +1,7 @@
 import { mongoose } from "mongoose";
 import { product } from "../schemas/mongoSchemas.js";
 
-export class RealTimeManager {
+export class ProductManager {
   constructor() {
     this.initialize();
   }
@@ -9,10 +9,10 @@ export class RealTimeManager {
   async initialize() {
     try {
       mongoose.set("strictQuery", false);
-      await mongoose.connect("mongodb://127.0.0.1:27017/productDatabase");
+      await mongoose.connect("mongodb+srv://jocapear:coderhouse@svdata.ukwp5dv.mongodb.net/products")
       this.product = mongoose.model("Product", new mongoose.Schema(product));
       console.log(
-        'Base de datos conectada en "127.0.0.1:27017/productDatabase"\n'
+        'Base de datos conectada\n'
       );
     } catch {
       console.log("Error en la conexion con la base datos \n");
@@ -34,7 +34,7 @@ export class RealTimeManager {
       });
       return products;
     } catch (error) {
-      console.log("Falla al obtener los producto");
+      console.log("Falla al obtener los productos", error);
       return false;
     }
   }
@@ -48,7 +48,6 @@ export class RealTimeManager {
     });
     try {
       await newProduct.save();
-      console.log("Producto agregado");
       return true;
     } catch (error) {
       console.log("Falla en la insercion en la base datos", error.toString());
