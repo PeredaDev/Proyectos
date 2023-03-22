@@ -1,24 +1,20 @@
 <h1 class="m-4">Productos</h1>
 <div class="container mx-auto">
   <div class="row mb-3" id="products2sell">
-    <div class="col-sm mb-3">
-
-      <div class="card" style="width: 18rem;">
-
-        <img src="..." class="card-img-top" />
-
-        <div class="card-body">
-
-          <h5 class="card-title">Card title</h5>
-
-          <p class="card-text">Some quick example text to build on the card
-            title and make up the bulk of the card's content.</p>
-
-          <a href="#" class="btn btn-primary">Go somewhere</a>
-
+    {{#each context}}
+      <div class="col-sm mb-3">
+        <div class="card" style="width: 18rem;">
+            <img src="../img/download.jpg" class="card-img-top">
+            <div class="card-body">
+              <h5 class="card-img-top">{{this.title}}  ${{this.price}}</h5>
+              <p class="card-text">Codigo: {{this.code}}</p>
+              <p class="card-text">{{this.description}}</p>
+              <a class="btn btn-primary" onclick="addProductToCard(`{{this.id}}`)">Agregar al carrito</a>
+            </div>
         </div>
       </div>
-    </div>
+    {{/each}}
   </div>
 </div>
-<script src="./js/home.js"></script>
+
+<script src="../js/home.js"></script>

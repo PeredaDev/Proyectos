@@ -2,11 +2,12 @@ import express from "express";
 import productsRouter from "./routes/products.js";
 import cartRouter from "./routes/cart.js";
 import homeRouter from "./routes/home.js";
+import { __dirname } from "./utils/path.js";
 import { engine } from "express-handlebars";
 import { Server } from "socket.io";
-import { __dirname } from "./utils/path.js";
 import { ProductManager } from "./controllers/products.js";
 import { CartManager } from "./controllers/cart.js";
+import { HomeManager } from "./controllers/home.js";
 
 //Default directories
 const publicDirname = __dirname + "public";
@@ -39,29 +40,39 @@ const server = app.listen(PORT, () => {
 
 //Start objects manager
 const productManager = new ProductManager();
+const homeManager = new HomeManager();
 const cartManager = new CartManager();
 
 //Start a web socket server
 const io = new Server(server);
 
 //Web sockets funtionality
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
   updateView(socket);
 
   socket.on("deleteProduct", (id) => {
     if (productManager.deleteProduct(id)) updateView(socket);
   });
 
-  socket.on("addProduct", (product) => {
-    if (productManager.addProduct(product)) updateView(socket);
+  socket.on("addProduct", async (product) => {
+    if (await productManager.addProduct(product)) {
+      updateView(socket);
+    } else {
+      socket.emit("codeExists", product.code);
+    }
   });
 
-  socket.on("modifyProduct", (modifiedProduct, id) => {
-    if (productManager.modifyProducts(id, modifiedProduct)) updateView(socket);
+  socket.on("modifyProduct", async (modifiedProduct, id) => {
+    if (await productManager.modifyProducts(id, modifiedProduct)) {
+      updateView(socket);
+    } else {
+      socket.emit("codeExists", modifiedProduct.code);
+    }
   });
 });
 
 async function updateView(socket) {
   const products = await productManager.getProducts();
   socket.emit("update", products);
+  socket.emit("updateSellProducts", products);
 }

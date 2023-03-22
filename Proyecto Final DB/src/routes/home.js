@@ -1,9 +1,9 @@
-import {Router} from 'express'
+import { Router } from "express";
+import { HomeManager } from "../controllers/home.js";
 
-const homeRouter = Router()
+const homeRouter = Router();
+const homeManager = new HomeManager();
 
-homeRouter.get('/', async (req, res) => {
-    res.render("home")
-})
+homeRouter.get("/", homeManager.getProducts);
 
 export default homeRouter;

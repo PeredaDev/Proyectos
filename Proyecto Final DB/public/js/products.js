@@ -74,6 +74,7 @@ socket.on("update", (products) => {
     const rowElementId = document.createElement("td");
     const rowElementName = document.createElement("td");
     const rowElemenDescription = document.createElement("td");
+    const rowElemenCategory = document.createElement("td");
     const rowElementPrice = document.createElement("td");
     const rowElementCode = document.createElement("td");
     const rowElementAction = document.createElement("td");
@@ -100,6 +101,7 @@ socket.on("update", (products) => {
     rowElementId.innerText = product.id;
     rowElementName.innerText = product.title;
     rowElemenDescription.innerText = product.description;
+    rowElemenCategory.innerText = product.category;
     rowElementPrice.innerText = product.price;
     rowElementCode.innerText = product.code;
 
@@ -111,30 +113,36 @@ socket.on("update", (products) => {
     tableBodyTrNode.append(rowElementId);
     tableBodyTrNode.append(rowElementName);
     tableBodyTrNode.append(rowElemenDescription);
+    tableBodyTrNode.append(rowElemenCategory);
     tableBodyTrNode.append(rowElementPrice);
     tableBodyTrNode.append(rowElementCode);
     tableBodyTrNode.append(rowElementAction);
     tableBodyNode.append(tableBodyTrNode);
   }
-});
+})
+
+socket.on("codeExists", (code) => {
+  window.confirm("El codigo (" + code + ") ya existe en la base de datos")
+})
 
 const headerText = [
   "ID",
   "Titulo",
   "Descripcion",
+  "Categoria",
   "Precio",
   "Codigo",
   "Accion",
-];
+]
 
-const tableNode = document.createElement("table");
-const tableHeadNode = document.createElement("thead");
-const tableHeadTrNode = document.createElement("tr");
-tableNode.append(tableHeadNode);
-tableHeadNode.append(tableHeadTrNode);
-tableNode.setAttribute("class", "table table-bordered");
-body = document.getElementById("productTable");
-body.append(tableNode);
+const tableNode = document.createElement("table")
+const tableHeadNode = document.createElement("thead")
+const tableHeadTrNode = document.createElement("tr")
+tableNode.append(tableHeadNode)
+tableHeadNode.append(tableHeadTrNode)
+tableNode.setAttribute("class", "table table-bordered")
+body = document.getElementById("productTable")
+body.append(tableNode)
 
 for (const header of headerText) {
   const headerElement = document.createElement("th");
