@@ -20,7 +20,7 @@ export class HomeManager {
     const { limit, page, filter, sort } = req.query;
 
     const Page = page != undefined ? page : 1;
-    const Limit = limit != undefined ? limit : 1;
+    const Limit = limit != undefined ? limit : 5;
     const Sort = sort == "asc" ? 1 : -1;
     
     console.log("Pagina: " + Page)
@@ -37,6 +37,11 @@ export class HomeManager {
       productos = await productModel.paginate({}, { limit: Limit, page: Page, sort: { price: Sort } })
     }
     console.log(productos)
+    const totalPages = []
+    for (let index = 1; index <= productos.totalPages; index++) {
+      totalPages.push(index)
+    }
+    console.log(totalPages)
     const context =  productos.docs.map( document => 
         {
           return {
@@ -47,7 +52,13 @@ export class HomeManager {
             id: document._id.toString()
           }
         })
-    
-    await res.render("home", {context})
+    if(page <= productos.totalPages)
+    {
+      await res.render("home", {context, totalPages, Limit, sort, filter})
+    }
+    else
+    {
+      await res.send("Error, pagina fuera de rango")
+    }
   }
 }

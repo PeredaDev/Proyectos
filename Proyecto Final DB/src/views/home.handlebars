@@ -16,5 +16,12 @@
     {{/each}}
   </div>
 </div>
+<nav aria-label="Page navigation example">
+  <ul class="pagination justify-content-center">
+    {{#each totalPages}}
+      <li class="page-item"><a class="page-link" href="?page={{this}}&limit={{../Limit}}&sort={{../sort}}&filter={{../filter}}">{{this}}</a></li>
+    {{/each}}  
+  </ul>
+</nav>
 
 <script src="../js/home.js"></script>
