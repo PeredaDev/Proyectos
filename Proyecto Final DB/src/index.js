@@ -74,5 +74,4 @@ io.on("connection", async (socket) => {
 async function updateView(socket) {
   const products = await productManager.getProducts();
   socket.emit("update", products);
-  socket.emit("updateSellProducts", products);
 }

@@ -9,11 +9,13 @@ function modifyProduct(id) {
   let description = document.getElementById("getDescriptionModify");
   let price = document.getElementById("getPriceModify");
   let code = document.getElementById("getCodeModify");
+  let category = document.getElementById("getCategoryModify");
   if (
     !(
       title.value === "" ||
       description.value === "" ||
       price.value === "" ||
+      category.value === "" ||
       isNaN(code.value)
     )
   ) {
@@ -21,10 +23,12 @@ function modifyProduct(id) {
       title: title.value,
       description: description.value,
       price: price.value,
+      category: category.value,
       code: Number(code.value),
     };
     title.value = "";
     description.value = "";
+    category.value = "";
     price.value = "";
     code.value = "";
     socket.emit("modifyProduct", product, id);
@@ -38,22 +42,26 @@ function addProduct() {
   let description = document.getElementById("getDescription");
   let price = document.getElementById("getPrice");
   let code = document.getElementById("getCode");
+  let category = document.getElementById("getCategory");
   if (
     !(
       title.value === "" ||
       description.value === "" ||
       price.value === "" ||
+      category.value === "" ||
       isNaN(code.value)
     )
   ) {
     const product = {
       title: title.value,
       description: description.value,
+      category: category.value,
       price: price.value,
       code: code.value,
     };
     title.value = "";
     description.value = "";
+    category.value = "";
     price.value = "";
     code.value = "";
     socket.emit("addProduct", product);

@@ -36,12 +36,10 @@ export class HomeManager {
     {
       productos = await productModel.paginate({}, { limit: Limit, page: Page, sort: { price: Sort } })
     }
-    console.log(productos)
     const totalPages = []
     for (let index = 1; index <= productos.totalPages; index++) {
       totalPages.push(index)
     }
-    console.log(totalPages)
     const context =  productos.docs.map( document => 
         {
           return {
@@ -52,7 +50,11 @@ export class HomeManager {
             id: document._id.toString()
           }
         })
-    if(page <= productos.totalPages)
+
+    console.log("Pagina: " + page)
+    console.log("Total pages: " + productos.totalPages)
+
+    if(page <= productos.totalPages || !page)
     {
       await res.render("home", {context, totalPages, Limit, sort, filter})
     }

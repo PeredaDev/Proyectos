@@ -41,6 +41,7 @@ export class ProductManager {
     const newProduct = new productModel({
       title: product.title,
       description: product.description,
+      category: product.category,
       price: product.price,
       code: product.code,
     });
@@ -61,14 +62,15 @@ export class ProductManager {
   async modifyProducts(id, product) {
     try {
       let exists = await productModel.findOne({ code: product.code });
-      if (exists) {
-        return false;
+      if (exists && !product.code === exists.code) {
+          return false;
       } else {
         await productModel.updateOne(
           { _id: id },
           {
             title: product.title,
             description: product.description,
+            category: product.category,
             price: product.price,
             code: product.code,
           }
