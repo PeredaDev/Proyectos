@@ -8,6 +8,7 @@ import { Server } from "socket.io";
 import { ProductManager } from "./controllers/products.js";
 import { CartManager } from "./controllers/cart.js";
 import { HomeManager } from "./controllers/home.js";
+import connectionMongoose from "./utils/connection.js";
 
 //Default directories
 const publicDirname = __dirname + "public";

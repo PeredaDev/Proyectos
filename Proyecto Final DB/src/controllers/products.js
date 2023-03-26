@@ -1,35 +1,22 @@
-import { mongoose } from "mongoose";
 import productModel from "../schemas/product.js";
 
 export class ProductManager {
-  constructor() {
-    this.initialize();
-  }
-
-  async initialize() {
-    try {
-      mongoose.set("strictQuery", false);
-      // await mongoose.connect("mongodb+srv://jocapear:coderhouse@svdata.ukwp5dv.mongodb.net/products")
-      await mongoose.connect("mongodb://localhost:27017/products");
-    } catch {
-      console.log("Error en la conexion con la base datos \n");
-    }
-  }
-
   async getProducts() {
     try {
       let products = await productModel.find();
-      products = products.map(({ _id, title, description, category, price, code}) => {
-        const id = _id.toString();
-        return {
-          id,
-          title,
-          description,
-          category,
-          price,
-          code,
-        };
-      });
+      products = products.map(
+        ({ _id, title, description, category, price, code }) => {
+          const id = _id.toString();
+          return {
+            id,
+            title,
+            description,
+            category,
+            price,
+            code,
+          };
+        }
+      );
       return products;
     } catch (error) {
       console.log("Falla al obtener los productos", error);
@@ -63,7 +50,7 @@ export class ProductManager {
     try {
       let exists = await productModel.findOne({ code: product.code });
       if (exists && !product.code === exists.code) {
-          return false;
+        return false;
       } else {
         await productModel.updateOne(
           { _id: id },
