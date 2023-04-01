@@ -3,6 +3,9 @@ import productModel from "../schemas/product.js";
 export class HomeManager {
 
   async getProducts(req, res) {
+    if (!req.user) {
+      return res.status(401).send({ status: "error", error: "Usuario no loggeado" })
+    }
     const { limit, page, filter, sort } = req.query;
 
     const Page = page != undefined ? page : 1;

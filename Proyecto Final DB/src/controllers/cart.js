@@ -2,6 +2,11 @@ import cartModel from "../schemas/cart.js";
 
 export class CartManager {
   async getCart(req, res) {
+    if (!req.user) {
+      return res
+        .status(401)
+        .send({ status: "error", error: "Usuario no loggeado" });
+    }
     const cid = req.params.cid;
     let cart = await cartModel.findById(cid).populate("products._id");
     let products = cart.products;
@@ -10,7 +15,7 @@ export class CartManager {
       let product2add = product._id;
       goodProducts.push(product2add);
     });
-    console.log(goodProducts)
+    console.log(goodProducts);
     const context = goodProducts.map((document) => {
       return {
         title: document.title,
@@ -21,10 +26,15 @@ export class CartManager {
       };
     });
 
-    res.render("cart", { context , cid});
+    res.render("cart", { context, cid });
   }
 
   async createCart(req, res) {
+    if (!req.user) {
+      return res
+        .status(401)
+        .send({ status: "error", error: "Usuario no loggeado" });
+    }
     try {
       await cartModel.create({ products: [] });
       res.send("Carrito creado");
@@ -35,6 +45,11 @@ export class CartManager {
   }
 
   async updateCart(req, res) {
+    if (!req.user) {
+      return res
+        .status(401)
+        .send({ status: "error", error: "Usuario no loggeado" });
+    }
     const cid = req.params.cid;
     const products = req.body;
 
@@ -55,6 +70,11 @@ export class CartManager {
   }
 
   async deleteCart(req, res) {
+    if (!req.user) {
+      return res
+        .status(401)
+        .send({ status: "error", error: "Usuario no loggeado" });
+    }
     const cid = req.params.cid;
 
     try {
@@ -66,6 +86,11 @@ export class CartManager {
   }
 
   async addProduct(req, res) {
+    if (!req.user) {
+      return res
+        .status(401)
+        .send({ status: "error", error: "Usuario no loggeado" });
+    }
     const pid = req.params.pid;
     const cid = req.params.cid;
 
@@ -91,6 +116,11 @@ export class CartManager {
   }
 
   async updateProduct(req, res) {
+    if (!req.user) {
+      return res
+        .status(401)
+        .send({ status: "error", error: "Usuario no loggeado" });
+    }
     const pid = req.params.pid;
     const cid = req.params.cid;
     let quantity = parseInt(req.body.quantity);
@@ -104,6 +134,11 @@ export class CartManager {
   }
 
   async deleteProduct(req, res) {
+    if (!req.user) {
+      return res
+        .status(401)
+        .send({ status: "error", error: "Usuario no loggeado" });
+    }
     const pid = req.params.pid;
     const cid = req.params.cid;
 

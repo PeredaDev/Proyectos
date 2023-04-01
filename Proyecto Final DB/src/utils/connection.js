@@ -1,12 +1,12 @@
 import { mongoose } from "mongoose";
+import 'dotenv/config'
 
 const db = mongoose.connection;
 const connectionMongoose = () => {
   mongoose.set("strictQuery", true);
   mongoose
-    .connect("mongodb+srv://jocapear:coderhouse@svdata.ukwp5dv.mongodb.net/SVDATA")
-    // .connect("mongodb://localhost:27017/SVDATA") use for local db
-    
+    // .connect(process.env.DATABASE_CONNECTION_INTERNET)
+    .connect(process.env.DATABASE_CONNECTION_LOCAL)
     .catch((err) => console.log(err));
 
   db.once("open", () => {
