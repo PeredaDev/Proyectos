@@ -41,19 +41,15 @@ const loginMiddleware = async (username, password, done) => {
       }
       return done(null, adminUser);
     }
-    console.log("123123asd")
 
     const user = await userManager.getUserByEmail(username);
-    console.log(user)
 
     if (user && validatePassword(password, user.password)) {
-    console.log(user)
 
       return done(null, user);
     }
     return done(null, false);
   } catch (error) {
-    console.log(error + "123123asd")
     return done(error);
   }
 };

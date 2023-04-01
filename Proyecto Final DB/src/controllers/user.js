@@ -2,15 +2,16 @@ import userModel from "../schemas/user.js";
 
 export class UserManager {
   async createSession(req, res) {
-    if(req.user._id == 'admin0000000')
-    {
-      const user = "Administrador"
-      console.log(user)
-      return res.redirect("/home")
+    if (req.user._id == "admin0000000") {
+      req.session.user = {
+        first_name: "EL PODEROSISIMO ADMIN",
+        last_name: "",
+        age: "",
+        email: "",
+      };
+      return res.redirect("/home");
     }
     try {
-    console.log(req.user)
-
       if (!req.user) {
         return res
           .status(401)
@@ -23,11 +24,9 @@ export class UserManager {
         email: req.user.email,
       };
       req.session.login = true;
-      const user = req.session.user.first_name
-      console.log(user)
-      return res.render("home", user)
+      return res.redirect("/home");
     } catch (error) {
-      res.status(500).send(error.message)
+      res.status(500).send(error.message);
     }
   }
 
@@ -35,12 +34,12 @@ export class UserManager {
     if (req.session.login) {
       req.session.destroy();
     }
-    res.status(401).send({ status: "error", error: "Sesion cerrada" });
+    res.status(401).render("login");
   }
 
   async returnHome(req, res) {
-    const user = req.user
-    res.render("home", {user});
+    const user = req.user;
+    res.render("home", { user });
   }
 
   async getUserByEmail(email) {
