@@ -5,7 +5,7 @@ export class CartManager {
     if (!req.user) {
       return res
         .status(401)
-        .send({ status: "error", error: "Usuario no loggeado" });
+        .render("login");
     }
     const cid = req.params.cid;
     let cart = await cartModel.findById(cid).populate("products._id");

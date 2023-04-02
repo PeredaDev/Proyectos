@@ -5,7 +5,7 @@ export class HomeManager {
     if (!req.user) {
       return res
         .status(401)
-        .send({ status: "error", error: "Usuario no loggeado" });
+        .render("login");
     }
     const { limit, page, filter, sort } = req.query;
 
@@ -48,7 +48,7 @@ export class HomeManager {
     console.log("Sort: " + (sort == "asc" ? "Ascendente" : "Descendente"));
     console.log(
       "Category: " +
-        (filter == undefined ? "Sin filtro utilizado" : filter) +
+        (filter == (undefined||"") ? "Sin filtro utilizado" : filter) +
         "\n"
     );
 

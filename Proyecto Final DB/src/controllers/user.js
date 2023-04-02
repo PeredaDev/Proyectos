@@ -9,6 +9,7 @@ export class UserManager {
         age: "",
         email: "",
       };
+      req.session.login = true
       return res.redirect("/home");
     }
     try {
@@ -17,6 +18,7 @@ export class UserManager {
           .status(401)
           .send({ status: "error", error: "Invalidate User" });
       }
+      console.log(req.user)
       req.session.user = {
         first_name: req.user.first_name,
         last_name: req.user.last_name,
@@ -31,15 +33,24 @@ export class UserManager {
   }
 
   async destroySession(req, res) {
+    console.log(req.session.login)
+
     if (req.session.login) {
+      console.log(req.session.login)
       req.session.destroy();
     }
     res.status(401).render("login");
   }
 
   async returnHome(req, res) {
-    const user = req.user;
-    res.render("home", { user });
+    req.session.user = {
+      first_name: req.user.first_name,
+      last_name: req.user.last_name,
+      age: req.user.age,
+      email: req.user.email,
+    };
+    req.session.login = true
+    res.redirect("/home")
   }
 
   async getUserByEmail(email) {
