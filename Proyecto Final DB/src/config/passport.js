@@ -3,6 +3,8 @@ import passport from "passport";
 import { createHash, validatePassword } from "../utils/bcrypt.js";
 import { UserManager } from "../controllers/user.js";
 import GitHubStrategy from "passport-github2";
+import { globalAgent } from "https";
+globalAgent.options.rejectUnauthorized = false;
 
 // User manager
 const userManager = new UserManager();
@@ -56,20 +58,19 @@ const loginMiddleware = async (username, password, done) => {
 const githubStrategy = {
   clientID: process.env.GITHUB_CLIENT_ID,
   clientSecret: process.env.GITHUB_CLIENT_SECRET,
-  scope: ['user:email'],
+  scope: ["user:email"],
   calbackURL: process.env.GITHUB_CALLBACK_URL,
   passReqToCallback: true,
 };
 
-const loginGithubMiddleware = async (req, test, x, profile,  done) => {
+const loginGithubMiddleware = async (req, test, x, profile, done) => {
   try {
+    req.session.login = true;
     const userGithub = await userManager.getUserByEmail(
       profile.emails[0].value
     );
-    console.log( profile._json.name)
-    req.session.user.first_name = profile._json.name
-    req.session.login = true;
     if (userGithub) {
+      req.session.user = userGithub;
       return done(null, userGithub);
     } else {
       let newUser = await userManager.addUser({
@@ -79,6 +80,7 @@ const loginGithubMiddleware = async (req, test, x, profile,  done) => {
         age: 18,
         password: "Github",
       });
+      req.session.user = newUser;
       return done(null, newUser);
     }
   } catch (error) {
@@ -88,9 +90,18 @@ const loginGithubMiddleware = async (req, test, x, profile,  done) => {
 
 const initializePassport = () => {
   //Define my strategies
-  const registerStrategy = new LocalStrategy({ passReqToCallback: true, usernameField: "email" }, registerMiddleware);
-  const loginStrategy = new LocalStrategy({ usernameField: "email" }, loginMiddleware);
-  const loginGithubStrategy = new GitHubStrategy( githubStrategy,  loginGithubMiddleware);
+  const registerStrategy = new LocalStrategy(
+    { passReqToCallback: true, usernameField: "email" },
+    registerMiddleware
+  );
+  const loginStrategy = new LocalStrategy(
+    { usernameField: "email" },
+    loginMiddleware
+  );
+  const loginGithubStrategy = new GitHubStrategy(
+    githubStrategy,
+    loginGithubMiddleware
+  );
 
   // Asign strategies
   passport.use("register", registerStrategy);

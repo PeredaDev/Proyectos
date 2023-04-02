@@ -17,7 +17,7 @@ const githubConfig = {
 //Mostrar el login en navegador
 userRouter.post("/register", passport.authenticate("register"), userManager.returnHome);
 userRouter.post("/login", passport.authenticate("login"), userManager.createSession);
-userRouter.get("/loginGithub", passport.authenticate("github", githubConfig), userManager.createSession);
+userRouter.get("/loginGithub", passport.authenticate("github", githubConfig));
 userRouter.post("/logout", userManager.destroySession);
 
 userRouter.get("/loginHandlebars", async (req, res) => {

@@ -8,7 +8,6 @@ export class HomeManager {
         .render("login");
     }
     const { limit, page, filter, sort } = req.query;
-
     const Page = page != undefined ? page : 1;
     const Limit = limit != undefined ? limit : 5;
     const Sort = sort == "asc" ? 1 : -1;
@@ -39,8 +38,8 @@ export class HomeManager {
         id: document._id.toString(),
       };
     });
-    const user = req.session.user.first_name
-
+    const sessionUser = await req.user
+    const user = sessionUser.first_name
     console.log("\nRenderizando pagina home" + "\n");
     console.log("Total pages: " + productos.totalPages);
     console.log("Pagina: " + Page);

@@ -13,6 +13,7 @@ export class UserManager {
       return res.redirect("/home");
     }
     try {
+      console.log(req.user)
       if (!req.user) {
         return res
           .status(401)
@@ -31,14 +32,9 @@ export class UserManager {
       res.status(500).send(error.message);
     }
   }
-
+  
   async destroySession(req, res) {
-    console.log(req.session.login)
-
-    if (req.session.login) {
-      console.log(req.session.login)
-      req.session.destroy();
-    }
+    req.session.destroy();
     res.status(401).render("login");
   }
 
