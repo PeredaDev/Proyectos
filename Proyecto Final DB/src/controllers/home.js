@@ -3,15 +3,12 @@ import productModel from "../schemas/product.js";
 export class HomeManager {
   async getProducts(req, res) {
     if (!req.user) {
-      return res
-        .status(401)
-        .render("login");
+      return res.status(401).render("login");
     }
     const { limit, page, filter, sort } = req.query;
     const Page = page != undefined ? page : 1;
     const Limit = limit != undefined ? limit : 5;
     const Sort = sort == "asc" ? 1 : -1;
-    
 
     let productos = [];
     if (filter) {
@@ -38,8 +35,8 @@ export class HomeManager {
         id: document._id.toString(),
       };
     });
-    const sessionUser = await req.user
-    const user = sessionUser.first_name
+    const sessionUser = await req.session.user;
+    const user = sessionUser.first_name;
     console.log("\nRenderizando pagina home" + "\n");
     console.log("Total pages: " + productos.totalPages);
     console.log("Pagina: " + Page);
@@ -47,12 +44,19 @@ export class HomeManager {
     console.log("Sort: " + (sort == "asc" ? "Ascendente" : "Descendente"));
     console.log(
       "Category: " +
-        (filter == (undefined||"") ? "Sin filtro utilizado" : filter) +
+        (filter == (undefined || "") ? "Sin filtro utilizado" : filter) +
         "\n"
     );
 
     if (page <= productos.totalPages || !page) {
-      await res.render("home", { context, totalPages, Limit, sort, filter, user});
+      await res.render("home", {
+        context,
+        totalPages,
+        Limit,
+        sort,
+        filter,
+        user,
+      });
     } else {
       await res.send("Error, pagina fuera de rango");
     }

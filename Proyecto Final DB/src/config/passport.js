@@ -40,6 +40,11 @@ const loginMiddleware = async (username, password, done) => {
     if (username == "admin@admin.com" && password == "1234") {
       const adminUser = {
         _id: "admin0000000",
+        first_name: "El ADMIN",
+        last_name: "EL ADMIN TAMBIEN",
+        email: "EL ADMIN NO OCUPA CORREO",
+        age: "EL ADMIN TIENE 20",
+        password: "Dolores"
       };
       return done(null, adminUser);
     }
