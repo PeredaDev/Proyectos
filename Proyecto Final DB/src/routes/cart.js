@@ -16,10 +16,13 @@ cartRouter.put("/api/carts/:cid", cartManager.updateCart);
 //Borra el carrito desde postman
 cartRouter.delete("/api/carts/:cid", cartManager.deleteCart);
 
+//Borra un producto al carrito desde postman
+cartRouter.post("/api/carts/:cid/purchase", cartManager.purchaseCart);
+
 //Agrega un producto al carrito desde postman
 cartRouter.post("/api/:cid/product/:pid", cartManager.addProduct);
 
-//Modificar el producto dentro del garrito
+//Modificar el producto dentro del garrito desde post man
 cartRouter.put("/api/carts/:cid/products/:pid", cartManager.updateProduct);
 
 //Borra un producto al carrito desde postman

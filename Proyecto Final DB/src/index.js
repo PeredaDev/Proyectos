@@ -13,7 +13,6 @@ import MongoStore from "connect-mongo";
 import connectionMongoose from "./utils/connection.js";
 import passport from "passport";
 import initializePassport from "./config/passport.js";
-import cors from "cors";
 
 console.clear();
 

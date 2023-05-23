@@ -1,11 +1,11 @@
 import cartModel from "../schemas/cart.js";
+import ticketModel from "../schemas/ticket.js";
+import nodemailer from "nodemailer";
 
 export class CartManager {
   async getCart(req, res) {
     if (!req.user) {
-      return res
-        .status(401)
-        .render("login");
+      return res.status(401).render("login");
     }
     const cid = req.params.cid;
     let cart = await cartModel.findById(cid).populate("products._id");
@@ -83,6 +83,47 @@ export class CartManager {
     } catch (error) {
       res.send("Falla al borrar el carrito: " + error);
     }
+  }
+
+  async purchaseCart(req, res) {
+    const cid = req.params.cid;
+    let cart = await cartModel.findById(cid).populate("products._id");
+    let products = cart.products;
+    let totalAmount = 0;
+    for (let i = 0; i < products.length; i++) {
+      const product = products[i];
+      const price = parseFloat(product._id.price);
+      const quantity = product.quantity;
+      const amount = price * quantity;
+      totalAmount += amount;
+    }
+    const ticket = {
+      purchase_time: Date.now(),
+      purchaser: req.session.user.first_name,
+      amount: totalAmount,
+      products: cart.products,
+    };
+    await ticketModel.create(ticket);
+
+    //setup mailer
+    let transporter = nodemailer.createTransport({
+      host: "smtp.office365.com",
+      port: 587,
+      secure: false,
+      auth: {
+        user: "qwerty12@hotmail.es",
+        pass: "desmond",
+      },
+    });
+
+    const mailOptions = {
+      from: "qwerty12@hotmail.es",
+      to: "jcpa0204@outlook.com",
+      subject: "¡Hola, tu pedido ha sido procesado!",
+      text: `Hola ${req.session.user.first_name}, gracias por tu pedido en Silicon Valley \n\n Aquí tenes un resumen: ${cart.products} \n\n Por el total de ${totalAmount}`
+    };
+
+    transporter.sendMail(mailOptions);
   }
 
   async addProduct(req, res) {
